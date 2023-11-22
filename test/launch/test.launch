@@ -1,0 +1,3 @@
+<launch>
+    <test pkg="isr_ros_utils" type="isr_ros_utils-test" test-name="test_node" time-limit="10.0"/>
+</launch>
