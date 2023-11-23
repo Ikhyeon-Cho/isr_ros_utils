@@ -18,33 +18,27 @@ namespace isr::roscpp
 class Timer
 {
 public:
+  /// @brief
+  /// @tparam T
+  /// @param duration
+  /// @param fp
+  /// @param obj
+  /// @param autostart
+  /// @param oneshot
   template <typename T>
   explicit Timer(const ros::Duration& duration, void (T::*fp)(const ros::TimerEvent&), T* obj, bool autostart = false,
-        bool oneshot = false)
-    : duration_sec_(duration.toSec())
-  {
-    timer_ = nh_.createTimer(duration, fp, obj, oneshot, autostart);
-  }
+                 bool oneshot = false);
 
+  /// @brief
+  /// @tparam T
+  /// @param duration_param
+  /// @param fp
+  /// @param obj
+  /// @param autostart
+  /// @param oneshot
   template <typename T>
   explicit Timer(const roscpp::Parameter<double>& duration_param, void (T::*fp)(const ros::TimerEvent&), T* obj,
-        bool autostart = false, bool oneshot = false)
-    : duration_sec_(duration_param.value())
-  {
-    timer_ = nh_.createTimer(ros::Duration(duration_sec_), fp, obj, oneshot, autostart);
-  }
-
-  // Timer(ros::Duration default_duration) : duration_(default_duration.toSec())
-  // {
-  // }
-
-  // Timer(const ros::NodeHandle& nh, double default_duration) : nh_(nh), duration_(default_duration)
-  // {
-  // }
-
-  // Timer(const ros::NodeHandle& nh, ros::Duration default_duration) : nh_(nh), duration_(default_duration.toSec())
-  // {
-  // }
+                 bool autostart = false, bool oneshot = false);
 
   void start()
   {
@@ -67,10 +61,24 @@ public:
   }
 
 private:
-  ros::NodeHandle nh_;
+  ros::NodeHandle nh_private_{ "~" };
   ros::Timer timer_;
   double duration_sec_;
 };
+
+template <typename T>
+Timer::Timer(const ros::Duration& duration, void (T::*fp)(const ros::TimerEvent&), T* obj, bool autostart, bool oneshot)
+  : duration_sec_(duration.toSec())
+{
+  timer_ = nh_private_.createTimer(duration, fp, obj, oneshot, autostart);
+}
+
+template <typename T>
+Timer::Timer(const roscpp::Parameter<double>& duration_param, void (T::*fp)(const ros::TimerEvent&), T* obj,
+             bool autostart, bool oneshot)
+  : Timer(ros::Duration(duration_param.value()), fp, obj, autostart, oneshot)
+{
+}
 
 }  // namespace isr::roscpp
 

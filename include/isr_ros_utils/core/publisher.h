@@ -11,7 +11,7 @@
 #define ISR_ROSCPP_CORE_PUBLISHER_H
 
 #include <ros/publisher.h>
-#include <isr_ros_utils/core/parameter.h>
+#include "isr_ros_utils/core/parameter.h"
 
 namespace isr::roscpp
 {
@@ -21,26 +21,41 @@ class Publisher
 public:
   /// @brief Constructor: publisher queue size is set to 10 in default
   /// @param topic Topic to be published
-  Publisher(const std::string& topic) : nh_("~"), topic_(topic)
-  {
-    pub_ = nh_.advertise<T>(topic_.value(), queue_size_.value());
-  }
+  Publisher(const std::string& topic);
 
   /// @brief Constructor
   /// @param topic Topic to be published
   /// @param queue_size Msg queue size
-  Publisher(const std::string& topic, uint32_t queue_size) : nh_("~"), topic_(topic), queue_size_(queue_size)
-  {
-    pub_ = nh_.advertise<T>(topic_.value(), queue_size_.value());
-  }
+  Publisher(const std::string& topic, uint32_t queue_size);
+
+  /// @brief Constructor: publisher queue size is set to 10 in default
+  /// @param nh Namespace to be added to topic
+  /// @param topic Topic to be published
+  Publisher(const ros::NodeHandle& nh, const std::string& topic);
 
   /// @brief Constructor: use this for setting new namespace in topic
   /// @param nh nodeHandle that has new namespace
   /// @param topic Topic to be published
-  Publisher(const ros::NodeHandle& nh, const std::string& topic) : nh_(nh), topic_(topic)
-  {
-    pub_ = nh_.advertise<T>(topic_.value(), queue_size_.value());
-  }
+  Publisher(const ros::NodeHandle& nh, const std::string& topic, uint32_t queue_size);
+
+  /// @brief
+  /// @param topic_param Parameterized topic to be published using ROS parameter server
+  Publisher(const roscpp::Parameter<std::string>& topic_param);
+
+  /// @brief
+  /// @param topic_param Parameterized topic to be published using ROS parameter server
+  Publisher(const roscpp::Parameter<std::string>& topic_param, uint32_t queue_size);
+
+  /// @brief
+  /// @param nh nodeHandle that has new namespace
+  /// @param topic_param Parameterized topic to be published using ROS parameter server
+  Publisher(const ros::NodeHandle& nh, const roscpp::Parameter<std::string>& topic_param);
+
+  /// @brief
+  /// @param nh nodeHandle that has new namespace
+  /// @param topic_param Parameterized topic to be published using ROS parameter server
+  /// @param queue_size Msg queue size
+  Publisher(const ros::NodeHandle& nh, const roscpp::Parameter<std::string>& topic_param, uint32_t queue_size);
 
   /// @brief
   /// @param key The key to be searched on the parameter server
@@ -61,6 +76,8 @@ public:
   /// @return Get topic name
   std::string getTopic() const;
 
+  /// @brief
+  /// @return Get publisher msg queue size
   int getQueueSize() const;
 
 private:
@@ -68,8 +85,56 @@ private:
   ros::Publisher pub_;
 
   roscpp::Parameter<std::string> topic_;
-  roscpp::Parameter<int> queue_size_{ 10 };
+  roscpp::Parameter<int> queue_size_;
 };
+
+template <typename T>
+Publisher<T>::Publisher(const ros::NodeHandle& nh, const std::string& topic, uint32_t queue_size)
+  : nh_(nh), topic_(topic), queue_size_(queue_size)
+{
+  pub_ = nh_.advertise<T>(topic_.value(), queue_size_.value());
+}
+
+template <typename T>
+Publisher<T>::Publisher(const std::string& topic) : Publisher(ros::NodeHandle("~"), topic, 10)
+{
+}
+
+template <typename T>
+Publisher<T>::Publisher(const std::string& topic, uint32_t queue_size)
+  : Publisher(ros::NodeHandle("~"), topic, queue_size)
+{
+}
+
+template <typename T>
+Publisher<T>::Publisher(const ros::NodeHandle& nh, const std::string& topic) : Publisher(nh, topic, 10)
+{
+}
+
+template <typename T>
+Publisher<T>::Publisher(const roscpp::Parameter<std::string>& topic_param)
+  : Publisher(ros::NodeHandle("~"), topic_param.value(), 10)
+{
+}
+
+template <typename T>
+Publisher<T>::Publisher(const roscpp::Parameter<std::string>& topic_param, uint32_t queue_size)
+  : Publisher(ros::NodeHandle("~"), topic_param.value(), queue_size)
+{
+}
+
+template <typename T>
+Publisher<T>::Publisher(const ros::NodeHandle& nh, const roscpp::Parameter<std::string>& topic_param)
+  : Publisher(nh, topic_param.value(), 10)
+{
+}
+
+template <typename T>
+Publisher<T>::Publisher(const ros::NodeHandle& nh, const roscpp::Parameter<std::string>& topic_param,
+                        uint32_t queue_size)
+  : Publisher(nh, topic_param.value(), queue_size)
+{
+}
 
 template <typename T>
 inline bool Publisher<T>::readParameter(const std::string& param_name, const std::string& default_topic)

@@ -10,7 +10,8 @@
 #ifndef ISR_ROSCPP_CORE_SUBSCRIBER_H
 #define ISR_ROSCPP_CORE_SUBSCRIBER_H
 
-#include <isr_ros_utils/core/parameter.h>
+#include <ros/subscriber.h>
+#include "isr_ros_utils/core/parameter.h"
 
 namespace isr::roscpp
 {
@@ -24,10 +25,7 @@ public:
   /// @param fp Callback function
   /// @param obj Object to call function
   template <typename M>
-  Subscriber(const std::string& topic, void (M::*fp)(const boost::shared_ptr<T const>&), M* obj) : topic_(topic)
-  {
-    sub_ = nh_.subscribe<T>(topic_.value(), queue_size_.value(), fp, obj);
-  }
+  Subscriber(const std::string& topic, void (M::*fp)(const boost::shared_ptr<T const>&), M* obj);
 
   /// @brief
   /// @tparam M ROS Msg types to subscribe
@@ -36,11 +34,7 @@ public:
   /// @param fp Callback function
   /// @param obj Object to call function
   template <typename M>
-  Subscriber(const std::string& topic, uint32_t queue_size, void (M::*fp)(const boost::shared_ptr<T const>&), M* obj)
-    : topic_(topic), queue_size_(queue_size)
-  {
-    sub_ = nh_.subscribe<T>(topic_.value(), queue_size_.value(), fp, obj);
-  }
+  Subscriber(const std::string& topic, uint32_t queue_size, void (M::*fp)(const boost::shared_ptr<T const>&), M* obj);
 
   /// @brief
   /// @tparam M ROS Msg types to subscribe
@@ -50,18 +44,58 @@ public:
   /// @param obj Object to call function
   template <typename M>
   Subscriber(const ros::NodeHandle& nh, const std::string& topic, void (M::*fp)(const boost::shared_ptr<T const>&),
-             M* obj)
-    : nh_(nh), topic_(topic)
-  {
-    sub_ = nh_.subscribe<T>(topic_.value(), queue_size_.value(), fp, obj);
-  }
+             M* obj);
 
+  /// @brief
+  /// @tparam M
+  /// @param nh
+  /// @param topic
+  /// @param queue_size
+  /// @param fp
+  /// @param obj
   template <typename M>
-  Subscriber(const roscpp::Parameter<std::string>& topic_param, void (M::*fp)(const boost::shared_ptr<T const>&), M* obj)
-    : topic_(topic_param.value())
-  {
-    sub_ = nh_.subscribe<T>(topic_.value(), queue_size_.value(), fp, obj);
-  }
+  Subscriber(const ros::NodeHandle& nh, const std::string& topic, uint32_t queue_size,
+             void (M::*fp)(const boost::shared_ptr<T const>&), M* obj);
+
+  /// @brief
+  /// @tparam M
+  /// @param topic_param
+  /// @param fp
+  /// @param obj
+  template <typename M>
+  Subscriber(const roscpp::Parameter<std::string>& topic_param, void (M::*fp)(const boost::shared_ptr<T const>&),
+             M* obj);
+
+  /// @brief
+  /// @tparam M
+  /// @param topic_param
+  /// @param queue_size
+  /// @param fp
+  /// @param obj
+  template <typename M>
+  Subscriber<T>::Subscriber(const roscpp::Parameter<std::string>& topic_param, uint32_t queue_size,
+                            void (M::*fp)(const boost::shared_ptr<T const>&), M* obj);
+
+  /// @brief
+  /// @tparam M
+  /// @param nh
+  /// @param topic_param
+  /// @param fp
+  /// @param obj
+  template <typename M>
+  Subscriber(const ros::NodeHandle& nh, const roscpp::Parameter<std::string>& topic_param,
+             void (M::*fp)(const boost::shared_ptr<T const>&), M* obj);
+
+  /// @brief
+  /// @tparam M
+  /// @param nh
+  /// @param topic_param
+  /// @param queue_size
+  /// @param fp
+  /// @param obj
+  template <typename M>
+  Subscriber(const ros::NodeHandle& nh, const roscpp::Parameter<std::string>& topic_param, uint32_t queue_size,
+             void (M::*fp)(const boost::shared_ptr<T const>&), M* obj);
 
   /// @brief
   /// @return Topic that subscribes
@@ -80,9 +114,73 @@ public:
 private:
   ros::NodeHandle nh_;
   ros::Subscriber sub_;
-  Parameter<std::string> topic_;
-  Parameter<int> queue_size_{ 10 };
+  std::string topic_;
+  uint32_t queue_size_;
 };
+
+template <typename T>
+template <typename M>
+Subscriber<T>::Subscriber(const ros::NodeHandle& nh, const std::string& topic, uint32_t queue_size,
+                          void (M::*fp)(const boost::shared_ptr<T const>&), M* obj)
+  : nh_(nh), topic_(topic), queue_size_(queue_size)
+{
+  sub_ = nh_.subscribe<T>(topic_, queue_size_, fp, obj);
+}
+
+template <typename T>
+template <typename M>
+Subscriber<T>::Subscriber(const std::string& topic, void (M::*fp)(const boost::shared_ptr<T const>&), M* obj)
+  : Subscriber(nh_, topic, 10, fp, obj)
+{
+}
+
+template <typename T>
+template <typename M>
+Subscriber<T>::Subscriber(const std::string& topic, uint32_t queue_size,
+                          void (M::*fp)(const boost::shared_ptr<T const>&), M* obj)
+  : Subscriber(nh_, topic, queue_size, fp, obj)
+{
+}
+
+template <typename T>
+template <typename M>
+Subscriber<T>::Subscriber(const ros::NodeHandle& nh, const std::string& topic,
+                          void (M::*fp)(const boost::shared_ptr<T const>&), M* obj)
+  : Subscriber(nh_, topic, 10, fp, obj)
+{
+}
+
+template <typename T>
+template <typename M>
+Subscriber<T>::Subscriber(const roscpp::Parameter<std::string>& topic_param,
+                          void (M::*fp)(const boost::shared_ptr<T const>&), M* obj)
+  : Subscriber(nh_, topic_param.value(), 10, fp, obj)
+{
+}
+
+template <typename T>
+template <typename M>
+Subscriber<T>::Subscriber(const roscpp::Parameter<std::string>& topic_param, uint32_t queue_size,
+                          void (M::*fp)(const boost::shared_ptr<T const>&), M* obj)
+  : Subscriber(nh_, topic_param.value(), queue_size, fp, obj)
+{
+}
+
+template <typename T>
+template <typename M>
+Subscriber<T>::Subscriber(const ros::NodeHandle& nh, const roscpp::Parameter<std::string>& topic_param,
+                          void (M::*fp)(const boost::shared_ptr<T const>&), M* obj)
+  : Subscriber(nh, topic_param.value(), 10, fp, obj)
+{
+}
+
+template <typename T>
+template <typename M>
+Subscriber<T>::Subscriber(const ros::NodeHandle& nh, const roscpp::Parameter<std::string>& topic_param,
+                          uint32_t queue_size, void (M::*fp)(const boost::shared_ptr<T const>&), M* obj)
+  : Subscriber(nh, topic_param.value(), queue_size, fp, obj)
+{
+}
 
 }  // namespace isr::roscpp
 #endif  // ISR_ROSCPP_CORE_SUBSCRIBER_H
