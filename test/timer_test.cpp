@@ -47,21 +47,24 @@ TEST_F(TimerTest, Constructors)
 
 TEST_F(TimerTest, TimerStartCondition)
 {
-  // timer 1
+  // timer 1 with default option: manual start
   roscpp::Timer timer(ros::Duration(0.1), &MockCallbackObject::callback, &object);
   EXPECT_FALSE(timer.hasStarted());
+
   timer.start();
   EXPECT_TRUE(timer.hasStarted());
 
-  // timer 2
+  // timer 2 with autostart option
   roscpp::Timer timer2(ros::Duration(0.1), &MockCallbackObject::callback, &object, true);
   EXPECT_TRUE(timer2.hasStarted());
+
   timer2.stop();
   EXPECT_FALSE(timer2.hasStarted());
 }
 
 TEST_F(TimerTest, TimerCallback)
 {
+  // callback function in 'object' is triggered every 0.1 sec
   roscpp::Timer timer(0.1, &MockCallbackObject::callback, &object);
   EXPECT_FALSE(object.callback_executed);
 
