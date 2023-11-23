@@ -73,7 +73,7 @@ public:
   /// @param fp
   /// @param obj
   template <typename M>
-  Subscriber<T>::Subscriber(const roscpp::Parameter<std::string>& topic_param, uint32_t queue_size,
+  Subscriber(const roscpp::Parameter<std::string>& topic_param, uint32_t queue_size,
                             void (M::*fp)(const boost::shared_ptr<T const>&), M* obj);
 
   /// @brief
@@ -108,7 +108,7 @@ public:
   /// @return Callback queue size
   int getQueueSize() const
   {
-    return queue_size_.value();
+    return queue_size_;
   }
 
 private:
