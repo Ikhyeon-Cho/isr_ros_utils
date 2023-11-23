@@ -1,0 +1,11 @@
+<launch>
+    <arg name="package" default="isr_ros_utils" />
+
+    <!-- ROS Parameters -->
+    <rosparam file="$(dirname)/../config/node_params.yaml" command="load" subst_value="true" />
+
+    <node pkg="$(arg package)" type="publisher_test_node" name="publisher_test_node" output="screen" />
+    <node pkg="$(arg package)" type="subscriber_test_node" name="subscriber_test_node" output="screen" />
+    <node pkg="$(arg package)" type="timer_test_node" name="timer_test_node" output="screen" />
+
+</launch>

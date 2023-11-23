@@ -59,4 +59,26 @@ if (CATKIN_ENABLE_TESTING)
   target_link_libraries(${PROJECT_NAME}-test
       ${catkin_LIBRARIES}
   )
+
+  add_executable(publisher_test_node 
+    test/publisher_test_node.cpp
+  )
+  target_link_libraries(publisher_test_node 
+    ${catkin_LIBRARIES}
+  )
+
+  add_executable(subscriber_test_node 
+    test/subscriber_test_node.cpp
+  )
+  target_link_libraries(subscriber_test_node 
+    ${catkin_LIBRARIES}
+  )
+
+  add_executable(timer_test_node 
+    test/timer_test_node.cpp
+  )
+  target_link_libraries(timer_test_node 
+    ${catkin_LIBRARIES}
+  )
+
 endif()

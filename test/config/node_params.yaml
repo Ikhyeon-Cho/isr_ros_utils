@@ -1,0 +1,8 @@
+Publisher:
+  Topic:
+    StringPublisher: "test_topic_a"
+
+
+Subscriber:
+  Topic:
+    StringSubscriber: "/publisher_test_node/test_topic_a"
