@@ -24,7 +24,7 @@ protected:
   MockCallbackObject object;
 };
 
-TEST_F(TimerTest, Constructors)
+TEST_F(TimerTest, constructors)
 {
   // timer 1
   roscpp::Timer timer(ros::Duration(0.1), &MockCallbackObject::callback, &object);
@@ -45,7 +45,7 @@ TEST_F(TimerTest, Constructors)
   EXPECT_DOUBLE_EQ(timer3.getDuration(), 0.5);
 }
 
-TEST_F(TimerTest, TimerStartCondition)
+TEST_F(TimerTest, timerStartCondition)
 {
   // timer 1 with default option: manual start
   roscpp::Timer timer(ros::Duration(0.1), &MockCallbackObject::callback, &object);
@@ -62,7 +62,7 @@ TEST_F(TimerTest, TimerStartCondition)
   EXPECT_FALSE(timer2.hasStarted());
 }
 
-TEST_F(TimerTest, TimerCallback)
+TEST_F(TimerTest, timerCallback)
 {
   // callback function in 'object' is triggered every 0.1 sec
   roscpp::Timer timer(0.1, &MockCallbackObject::callback, &object);

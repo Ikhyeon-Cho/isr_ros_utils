@@ -22,7 +22,7 @@ protected:
   roscpp::Publisher<std_msgs::String> new_namespace_topic_publisher_{ nodeHandle_, "topic" };
 };
 
-TEST_F(PublisherTest, Constructors)
+TEST_F(PublisherTest, constructors)
 {
   // // Check topic settings
   EXPECT_STREQ(local_topic_publisher_.getTopic().c_str(), "/test_node/topic");  // Default: local namespace ("~")
@@ -35,7 +35,7 @@ TEST_F(PublisherTest, Constructors)
   EXPECT_EQ(new_namespace_topic_publisher_.getQueueSize(), 10);
 }
 
-TEST_F(PublisherTest, ReadParameter)
+TEST_F(PublisherTest, readParameter)
 {
   // Read from Parameter Server
   bool success_local = local_topic_publisher_.readParameter("topic");

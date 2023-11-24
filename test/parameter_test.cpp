@@ -15,7 +15,7 @@ protected:
 };
 
 //! Note default values
-TEST_F(ParameterTest, Constructor)
+TEST_F(ParameterTest, constructor)
 {
   EXPECT_EQ(param_int_.value(), 0);
   EXPECT_FLOAT_EQ(param_float_.value(), 0.f);
@@ -23,7 +23,7 @@ TEST_F(ParameterTest, Constructor)
   EXPECT_STREQ(param_string_.value().c_str(), "");
 }
 
-TEST_F(ParameterTest, DefaultValueConstructor)
+TEST_F(ParameterTest, defaultValueConstructor)
 {
   roscpp::Parameter<int> param_int(42);
   roscpp::Parameter<float> param_float(42);
@@ -36,7 +36,7 @@ TEST_F(ParameterTest, DefaultValueConstructor)
   EXPECT_STREQ(param_string.value().c_str(), "test");
 }
 
-TEST_F(ParameterTest, ReadParamConstructor)
+TEST_F(ParameterTest, readParamConstructor)
 {
   // Register value to Parameter Server
   ros::param::set("param_int", 100);
@@ -56,7 +56,7 @@ TEST_F(ParameterTest, ReadParamConstructor)
   EXPECT_STREQ(param_string.value().c_str(), "100");
 }
 
-TEST_F(ParameterTest, SetValue)
+TEST_F(ParameterTest, setValue)
 {
   param_int_.set(20);
   param_float_.set(20);
@@ -69,7 +69,7 @@ TEST_F(ParameterTest, SetValue)
   EXPECT_STREQ(param_string_.value().c_str(), "set_value");
 }
 
-TEST_F(ParameterTest, ReadParameter)
+TEST_F(ParameterTest, readParameter)
 {
   // Register to ROS Parameter Server
   ros::param::set("/my_parameter_number", 30);
@@ -110,7 +110,7 @@ TEST_F(ParameterTest, ReadParameter)
   EXPECT_STREQ(param_string_.value().c_str(), "param");  // Only changed in here
 }
 
-TEST_F(ParameterTest, ReadParameterWithDefault)
+TEST_F(ParameterTest, readParameterWithDefault)
 {
   // Read from Parameter Server
   bool success_int = param_int_.readParameter("/nonexistent_parameter");
@@ -131,7 +131,7 @@ TEST_F(ParameterTest, ReadParameterWithDefault)
   EXPECT_STREQ(param_string_.value().c_str(), "");  // Only changed in here
 }
 
-TEST_F(ParameterTest, Get)
+TEST_F(ParameterTest, get)
 {
   roscpp::Parameter<int> param_int(1);
   roscpp::Parameter<float> param_float(2);

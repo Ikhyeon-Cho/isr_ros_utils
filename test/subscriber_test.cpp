@@ -38,7 +38,7 @@ protected:
   using StringSubscriber = roscpp::Subscriber<std_msgs::String>;
 };
 
-TEST_F(SubscriberTest, Constructors)
+TEST_F(SubscriberTest, constructors)
 {
   // Constructor with topic
   StringSubscriber subscriber_1("topic_normal", &MockCallbackObject::callback, &object);
@@ -60,7 +60,7 @@ TEST_F(SubscriberTest, Constructors)
   EXPECT_STREQ(subscriber_4.getTopic().c_str(), "/topic_from_server");
 }
 
-TEST_F(SubscriberTest, SubscriberCallback)
+TEST_F(SubscriberTest, subscriberCallback)
 {
   StringSubscriber subscriber("topic", &MockCallbackObject::callback, &object);
   EXPECT_FALSE(object.callback_executed);
