@@ -11,7 +11,7 @@
 #define ISR_ROSCPP_CORE_TIMER_H
 
 #include <ros/timer.h>
-#include "isr_ros_utils/core/parameter.h"
+#include "isr_ros_utils/core/Parameter.h"
 
 namespace isr::roscpp
 {

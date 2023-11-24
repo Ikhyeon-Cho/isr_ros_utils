@@ -11,7 +11,7 @@
 #define ISR_ROSCPP_CORE_SUBSCRIBER_H
 
 #include <ros/subscriber.h>
-#include "isr_ros_utils/core/parameter.h"
+#include "isr_ros_utils/core/Parameter.h"
 
 namespace isr::roscpp
 {

@@ -1,4 +1,4 @@
-#include "isr_ros_utils/core/subscriber.h"
+#include "isr_ros_utils/core/Subscriber.h"
 
 #include <ros/ros.h>
 #include <std_msgs/String.h>

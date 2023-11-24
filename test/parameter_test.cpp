@@ -1,4 +1,4 @@
-#include "isr_ros_utils/core/parameter.h"
+#include "isr_ros_utils/core/Parameter.h"
 
 #include <ros/ros.h>
 #include <gtest/gtest.h>

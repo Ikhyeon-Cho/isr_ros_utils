@@ -1,4 +1,4 @@
-#include "isr_ros_utils/core/publisher.h"
+#include "isr_ros_utils/core/Publisher.h"
 
 #include <ros/ros.h>
 #include <std_msgs/String.h>

@@ -1,4 +1,4 @@
-#include "isr_ros_utils/core/timer.h"
+#include "isr_ros_utils/core/Timer.h"
 
 #include <ros/ros.h>
 #include <std_msgs/String.h>
