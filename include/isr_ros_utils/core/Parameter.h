@@ -11,6 +11,7 @@
 #define ISR_ROSCPP_CORE_PARAMETER_H
 
 #include <ros/param.h>
+#include <ros/names.h>
 
 namespace roscpp
 {

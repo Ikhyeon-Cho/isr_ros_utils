@@ -1,5 +1,0 @@
-<launch>
-  <!-- <node name="" pkg="" type="" output="screen" /> -->
-  <test test-name="test_node" pkg="isr_ros_utils" type="test_subscriber_node" time-limit="10.0"
-    args="" />
-</launch>

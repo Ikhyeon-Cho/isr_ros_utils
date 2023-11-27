@@ -10,7 +10,7 @@
 #ifndef ISR_ROSCPP_CORE_SUBSCRIBER_H
 #define ISR_ROSCPP_CORE_SUBSCRIBER_H
 
-#include <ros/subscriber.h>
+#include <ros/ros.h>
 #include "isr_ros_utils/core/Parameter.h"
 
 namespace roscpp
@@ -74,7 +74,7 @@ public:
   /// @param obj
   template <typename M>
   Subscriber(const roscpp::Parameter<std::string>& topic_param, uint32_t queue_size,
-                            void (M::*fp)(const boost::shared_ptr<T const>&), M* obj);
+             void (M::*fp)(const boost::shared_ptr<T const>&), M* obj);
 
   /// @brief
   /// @tparam M
@@ -146,7 +146,7 @@ template <typename T>
 template <typename M>
 Subscriber<T>::Subscriber(const ros::NodeHandle& nh, const std::string& topic,
                           void (M::*fp)(const boost::shared_ptr<T const>&), M* obj)
-  : Subscriber(nh_, topic, 10, fp, obj)
+  : Subscriber(nh, topic, 10, fp, obj)
 {
 }
 

@@ -18,7 +18,7 @@ namespace roscpp
 class DynamicReconfigureServer
 {
 public:
-  /// @brief By registering variables (mostly the parameters) to the server, 
+  /// @brief By registering variables (mostly the parameters) to the server,
   /// they become dynamic and adjustable during node operation
   /// @param nh Set server namespace via ros nodehandle.
   DynamicReconfigureServer(const ros::NodeHandle& nh) : ddr_(nh)
@@ -30,7 +30,7 @@ public:
   /// @param name Names are shown in dynamic reconfigure panel (rqt)
   /// @param variable Variable to be registered to Dynamic reconfigure server
   /// @param min The minimum value that the variable should have
-  /// @param max The maximum value that the variable should have 
+  /// @param max The maximum value that the variable should have
   template <typename T>
   void registerVariable(const std::string& name, T& variable, T min = getMin<T>(), T max = getMax<T>())
   {
@@ -43,7 +43,7 @@ public:
   /// @param callback Callback to be called when the variable is changed
   /// @param obj Callback owner
   /// @param min The minimum value that the variable should have
-  /// @param max The maximum value that the variable should have 
+  /// @param max The maximum value that the variable should have
   template <typename T, typename M>
   void registerVariable(const std::string& name, T& variable, void (M::*callback)(T), M* obj, T min = getMin<T>(),
                         T max = getMax<T>())

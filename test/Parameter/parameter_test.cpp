@@ -3,8 +3,6 @@
 #include <ros/ros.h>
 #include <gtest/gtest.h>
 
-namespace isr
-{
 class ParameterTest : public ::testing::Test
 {
 protected:
@@ -48,7 +46,7 @@ TEST_F(ParameterTest, readParamConstructor)
   roscpp::Parameter<int> param_int("param_int", 42);
   roscpp::Parameter<float> param_float("param_float", 42);
   roscpp::Parameter<double> param_double("param_double", 42);
-  roscpp::Parameter<std::string> param_string("param_string" ,"test");
+  roscpp::Parameter<std::string> param_string("param_string", "test");
 
   EXPECT_EQ(param_int.value(), 100);
   EXPECT_FLOAT_EQ(param_float.value(), 100);
@@ -145,4 +143,11 @@ TEST_F(ParameterTest, get)
   EXPECT_STREQ(param_string.get().c_str(), "four");
 }
 
-}  // namespace isr
+int main(int argc, char** argv)
+{
+  ros::init(argc, argv, "rostest");
+  ros::NodeHandle nh;
+
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}

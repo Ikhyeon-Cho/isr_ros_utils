@@ -4,8 +4,6 @@
 #include <std_msgs/String.h>
 #include <gtest/gtest.h>
 
-namespace isr
-{
 class PublisherTest : public ::testing::Test
 {
 protected:
@@ -57,4 +55,11 @@ TEST_F(PublisherTest, readParameter)
   EXPECT_FALSE(success_test);
 }
 
-}  // namespace isr
+int main(int argc, char** argv)
+{
+  ros::init(argc, argv, "rostest");
+  ros::NodeHandle nh;
+
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}

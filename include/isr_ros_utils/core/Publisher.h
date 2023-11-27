@@ -11,6 +11,7 @@
 #define ISR_ROSCPP_CORE_PUBLISHER_H
 
 #include <ros/publisher.h>
+#include <ros/node_handle.h>
 #include "isr_ros_utils/core/Parameter.h"
 
 namespace roscpp

@@ -1,3 +1,0 @@
-<launch>
-    <test test-name="test_node" pkg="isr_ros_utils" type="tests_core"  time-limit="10.0" args="" />
-</launch>

@@ -11,6 +11,8 @@
 #define ISR_ROSCPP_CORE_TIMER_H
 
 #include <ros/timer.h>
+#include <ros/node_handle.h>
+
 #include "isr_ros_utils/core/Parameter.h"
 
 namespace roscpp
@@ -55,7 +57,7 @@ public:
     return duration_sec_;
   }
 
-  bool hasStarted() const
+  bool isRunning() const
   {
     return timer_.hasStarted();
   }
