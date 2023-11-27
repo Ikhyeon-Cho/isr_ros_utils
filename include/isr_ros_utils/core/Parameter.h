@@ -11,9 +11,8 @@
 #define ISR_ROSCPP_CORE_PARAMETER_H
 
 #include <ros/param.h>
-#include <ddynamic_reconfigure/ddynamic_reconfigure.h>
 
-namespace isr::roscpp
+namespace roscpp
 {
 template <typename T>
 class Parameter
@@ -106,5 +105,5 @@ inline bool Parameter<T>::readParameter(const std::string& param_name, const T& 
   return success;
 }
 
-}  // namespace isr::roscpp
+}  // namespace roscpp
 #endif  // ISR_ROSCPP_CORE_PARAMETER_H

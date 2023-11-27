@@ -13,7 +13,7 @@
 #include <ros/publisher.h>
 #include "isr_ros_utils/core/Parameter.h"
 
-namespace isr::roscpp
+namespace roscpp
 {
 template <typename T>
 class Publisher
@@ -170,6 +170,6 @@ inline int Publisher<T>::getQueueSize() const
   return queue_size_.value();
 }
 
-}  // namespace isr::roscpp
+}  // namespace roscpp
 
 #endif  // ISR_ROSCPP_CORE_PUBLISHER_H

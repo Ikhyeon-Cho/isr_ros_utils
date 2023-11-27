@@ -14,7 +14,7 @@
 
 #include <isr_roscpp_core/publisher.h>
 #include <isr_roscpp_tools/transform_handler.h>
-#include <isr_roscpp_tools/msg_converter.h>
+#include "isr_ros_utils/tools/MsgConverter.h"
 #include "isr_navigation/core/typedef.h"
 
 #include <pcl/point_cloud.h>
@@ -87,7 +87,7 @@ public:
     if (!transformHandler.getTransform(baseToMap, mapFrame.value(), baseFrame.value()))
       return false;
 
-    pose_ = roscpp::MsgsConverter::fromTransformStampedToPoseStamped(baseToMap);
+    pose_ = ros::MsgConverter::toPoseStamped(baseToMap);
     return true;
   }
 
@@ -97,7 +97,7 @@ public:
     if (!transformHandler.getTransform(baseToOdom, odomFrame.value(), baseFrame.value()))
       return false;
 
-    odometryPose_ = roscpp::MsgsConverter::fromTransformStampedToOdometry(baseToOdom);
+    odometryPose_ = ros::MsgConverter::toOdometry(baseToOdom);
     return true;
   }
 

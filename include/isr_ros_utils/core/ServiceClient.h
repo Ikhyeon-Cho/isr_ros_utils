@@ -1,5 +1,5 @@
 /*
- * service_client.h
+ * ServiceClient.h
  *
  *  Created on: Sep 20, 2023
  *      Author: Ikhyeon Cho
@@ -13,7 +13,7 @@
 #include <ros/param.h>
 #include <std_srvs/Empty.h>
 
-namespace isr::roscpp
+namespace roscpp
 {
 class ServiceClient
 {
@@ -45,6 +45,6 @@ public:
     ROS_WARN_STREAM_COND(!readParameter, "Could not read service parameter " << _param_name << ". Use default Value");
   }
 };
-}  // namespace isr::navigation
+}  // namespace roscpp
 
 #endif

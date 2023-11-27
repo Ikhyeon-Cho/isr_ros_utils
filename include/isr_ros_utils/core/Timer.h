@@ -13,7 +13,7 @@
 #include <ros/timer.h>
 #include "isr_ros_utils/core/Parameter.h"
 
-namespace isr::roscpp
+namespace roscpp
 {
 class Timer
 {
@@ -80,6 +80,6 @@ Timer::Timer(const roscpp::Parameter<double>& duration_param, void (T::*fp)(cons
 {
 }
 
-}  // namespace isr::roscpp
+}  // namespace roscpp
 
 #endif  // ISR_ROSCPP_CORE_TIMER_H

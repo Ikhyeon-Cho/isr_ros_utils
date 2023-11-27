@@ -6,7 +6,6 @@
 
 namespace isr
 {
-
 class PublisherTest : public ::testing::Test
 {
 protected:

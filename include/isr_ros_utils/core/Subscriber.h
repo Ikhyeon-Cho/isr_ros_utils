@@ -13,7 +13,7 @@
 #include <ros/subscriber.h>
 #include "isr_ros_utils/core/Parameter.h"
 
-namespace isr::roscpp
+namespace roscpp
 {
 template <typename T>
 class Subscriber
@@ -182,5 +182,5 @@ Subscriber<T>::Subscriber(const ros::NodeHandle& nh, const roscpp::Parameter<std
 {
 }
 
-}  // namespace isr::roscpp
+}  // namespace roscpp
 #endif  // ISR_ROSCPP_CORE_SUBSCRIBER_H
