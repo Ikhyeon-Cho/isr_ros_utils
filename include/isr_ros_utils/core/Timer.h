@@ -78,7 +78,7 @@ Timer::Timer(const ros::Duration& duration, void (T::*fp)(const ros::TimerEvent&
 template <typename T>
 Timer::Timer(const roscpp::Parameter<double>& duration_param, void (T::*fp)(const ros::TimerEvent&), T* obj,
              bool autostart, bool oneshot)
-  : Timer(ros::Duration(duration_param.value()), fp, obj, autostart, oneshot)
+  : Timer(ros::Duration(duration_param.param()), fp, obj, autostart, oneshot)
 {
 }
 

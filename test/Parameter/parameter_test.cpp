@@ -15,10 +15,10 @@ protected:
 //! Note default values
 TEST_F(ParameterTest, constructor)
 {
-  EXPECT_EQ(param_int_.value(), 0);
-  EXPECT_FLOAT_EQ(param_float_.value(), 0.f);
-  EXPECT_DOUBLE_EQ(param_double_.value(), 0.0);
-  EXPECT_STREQ(param_string_.value().c_str(), "");
+  EXPECT_EQ(param_int_.param(), 0);
+  EXPECT_FLOAT_EQ(param_float_.param(), 0.f);
+  EXPECT_DOUBLE_EQ(param_double_.param(), 0.0);
+  EXPECT_STREQ(param_string_.param().c_str(), "");
 }
 
 TEST_F(ParameterTest, defaultValueConstructor)
@@ -28,10 +28,10 @@ TEST_F(ParameterTest, defaultValueConstructor)
   roscpp::Parameter<double> param_double(42);
   roscpp::Parameter<std::string> param_string("test");
 
-  EXPECT_EQ(param_int.value(), 42);
-  EXPECT_FLOAT_EQ(param_float.value(), 42.f);
-  EXPECT_DOUBLE_EQ(param_double.value(), 42.0);
-  EXPECT_STREQ(param_string.value().c_str(), "test");
+  EXPECT_EQ(param_int.param(), 42);
+  EXPECT_FLOAT_EQ(param_float.param(), 42.f);
+  EXPECT_DOUBLE_EQ(param_double.param(), 42.0);
+  EXPECT_STREQ(param_string.param().c_str(), "test");
 }
 
 TEST_F(ParameterTest, readParamConstructor)
@@ -48,10 +48,10 @@ TEST_F(ParameterTest, readParamConstructor)
   roscpp::Parameter<double> param_double("param_double", 42);
   roscpp::Parameter<std::string> param_string("param_string", "test");
 
-  EXPECT_EQ(param_int.value(), 100);
-  EXPECT_FLOAT_EQ(param_float.value(), 100);
-  EXPECT_DOUBLE_EQ(param_double.value(), 100);
-  EXPECT_STREQ(param_string.value().c_str(), "100");
+  EXPECT_EQ(param_int.param(), 100);
+  EXPECT_FLOAT_EQ(param_float.param(), 100);
+  EXPECT_DOUBLE_EQ(param_double.param(), 100);
+  EXPECT_STREQ(param_string.param().c_str(), "100");
 }
 
 TEST_F(ParameterTest, setValue)
@@ -61,10 +61,10 @@ TEST_F(ParameterTest, setValue)
   param_double_.set(20);
   param_string_.set("set_value");
 
-  EXPECT_EQ(param_int_.value(), 20);
-  EXPECT_FLOAT_EQ(param_float_.value(), 20.f);
-  EXPECT_DOUBLE_EQ(param_double_.value(), 20.0);
-  EXPECT_STREQ(param_string_.value().c_str(), "set_value");
+  EXPECT_EQ(param_int_.param(), 20);
+  EXPECT_FLOAT_EQ(param_float_.param(), 20.f);
+  EXPECT_DOUBLE_EQ(param_double_.param(), 20.0);
+  EXPECT_STREQ(param_string_.param().c_str(), "set_value");
 }
 
 TEST_F(ParameterTest, readParameter)
@@ -85,10 +85,10 @@ TEST_F(ParameterTest, readParameter)
   EXPECT_FALSE(success_string_1);  // Only False in string type
 
   // Expected Values after readParameter
-  EXPECT_EQ(param_int_.value(), 30);
-  EXPECT_FLOAT_EQ(param_float_.value(), 30.f);
-  EXPECT_DOUBLE_EQ(param_double_.value(), 30.0);
-  EXPECT_STREQ(param_string_.value().c_str(), "");  // Does not change value
+  EXPECT_EQ(param_int_.param(), 30);
+  EXPECT_FLOAT_EQ(param_float_.param(), 30.f);
+  EXPECT_DOUBLE_EQ(param_double_.param(), 30.0);
+  EXPECT_STREQ(param_string_.param().c_str(), "");  // Does not change value
 
   ros::param::set("/my_parameter_string", "param");
 
@@ -102,10 +102,10 @@ TEST_F(ParameterTest, readParameter)
   EXPECT_FALSE(success_double_2);
   EXPECT_TRUE(success_string_2);  // Only True in string type
 
-  EXPECT_EQ(param_int_.value(), 30);
-  EXPECT_FLOAT_EQ(param_float_.value(), 30.f);
-  EXPECT_DOUBLE_EQ(param_double_.value(), 30.0);
-  EXPECT_STREQ(param_string_.value().c_str(), "param");  // Only changed in here
+  EXPECT_EQ(param_int_.param(), 30);
+  EXPECT_FLOAT_EQ(param_float_.param(), 30.f);
+  EXPECT_DOUBLE_EQ(param_double_.param(), 30.0);
+  EXPECT_STREQ(param_string_.param().c_str(), "param");  // Only changed in here
 }
 
 TEST_F(ParameterTest, readParameterWithDefault)
@@ -123,10 +123,10 @@ TEST_F(ParameterTest, readParameterWithDefault)
   EXPECT_FALSE(success_string);
 
   // Expected Values after readParameter: remain default
-  EXPECT_EQ(param_int_.value(), 0);
-  EXPECT_FLOAT_EQ(param_float_.value(), 0.f);
-  EXPECT_DOUBLE_EQ(param_double_.value(), 0.0);
-  EXPECT_STREQ(param_string_.value().c_str(), "");  // Only changed in here
+  EXPECT_EQ(param_int_.param(), 0);
+  EXPECT_FLOAT_EQ(param_float_.param(), 0.f);
+  EXPECT_DOUBLE_EQ(param_double_.param(), 0.0);
+  EXPECT_STREQ(param_string_.param().c_str(), "");  // Only changed in here
 }
 
 TEST_F(ParameterTest, get)

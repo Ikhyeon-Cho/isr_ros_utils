@@ -33,7 +33,7 @@ public:
 
   /// @brief
   /// @return Returns parameter value as const
-  const T& value() const;
+  const T& param() const;
 
   /// @brief
   /// @return Returns parameter value as non-const
@@ -70,7 +70,7 @@ Parameter<T>::Parameter(const std::string& key, const T& val)
 }
 
 template <typename T>
-inline const T& Parameter<T>::value() const
+inline const T& Parameter<T>::param() const
 {
   return val_;
 }

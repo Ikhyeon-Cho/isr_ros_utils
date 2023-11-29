@@ -93,7 +93,7 @@ template <typename T>
 Publisher<T>::Publisher(const ros::NodeHandle& nh, const std::string& topic, uint32_t queue_size)
   : nh_(nh), topic_(topic), queue_size_(queue_size)
 {
-  pub_ = nh_.advertise<T>(topic_.value(), queue_size_.value());
+  pub_ = nh_.advertise<T>(topic_.param(), queue_size_.param());
 }
 
 template <typename T>
@@ -114,26 +114,26 @@ Publisher<T>::Publisher(const ros::NodeHandle& nh, const std::string& topic) : P
 
 template <typename T>
 Publisher<T>::Publisher(const roscpp::Parameter<std::string>& topic_param)
-  : Publisher(ros::NodeHandle("~"), topic_param.value(), 10)
+  : Publisher(ros::NodeHandle("~"), topic_param.param(), 10)
 {
 }
 
 template <typename T>
 Publisher<T>::Publisher(const roscpp::Parameter<std::string>& topic_param, uint32_t queue_size)
-  : Publisher(ros::NodeHandle("~"), topic_param.value(), queue_size)
+  : Publisher(ros::NodeHandle("~"), topic_param.param(), queue_size)
 {
 }
 
 template <typename T>
 Publisher<T>::Publisher(const ros::NodeHandle& nh, const roscpp::Parameter<std::string>& topic_param)
-  : Publisher(nh, topic_param.value(), 10)
+  : Publisher(nh, topic_param.param(), 10)
 {
 }
 
 template <typename T>
 Publisher<T>::Publisher(const ros::NodeHandle& nh, const roscpp::Parameter<std::string>& topic_param,
                         uint32_t queue_size)
-  : Publisher(nh, topic_param.value(), queue_size)
+  : Publisher(nh, topic_param.param(), queue_size)
 {
 }
 
@@ -141,7 +141,7 @@ template <typename T>
 inline bool Publisher<T>::readParameter(const std::string& param_name, const std::string& default_topic)
 {
   bool get_param = topic_.readParameter(param_name, default_topic);
-  pub_ = nh_.advertise<T>(topic_.value(), queue_size_.value());
+  pub_ = nh_.advertise<T>(topic_.param(), queue_size_.param());
   return get_param;
 }
 
@@ -149,7 +149,7 @@ template <typename T>
 inline bool Publisher<T>::readParameter(const std::string& param_name)
 {
   bool get_param = topic_.readParameter(param_name);
-  pub_ = nh_.advertise<T>(topic_.value(), queue_size_.value());
+  pub_ = nh_.advertise<T>(topic_.param(), queue_size_.param());
   return get_param;
 }
 
@@ -168,7 +168,7 @@ inline std::string Publisher<T>::getTopic() const
 template <typename T>
 inline int Publisher<T>::getQueueSize() const
 {
-  return queue_size_.value();
+  return queue_size_.param();
 }
 
 }  // namespace roscpp

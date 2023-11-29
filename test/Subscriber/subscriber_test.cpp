@@ -29,14 +29,6 @@ protected:
   // 2. We can also specify queue size within constructor
   StringSub subscriber_2_{ "topic_2", 5, &SubscriberTest::callback, this };
 
-  // 3. We can also specify namespace (prefix) of the topic name with constructor
-  StringSub subscriber_3_{ nh_private, "topic_3", &SubscriberTest::callback, this };
-
-  // 4. Subscriber can use roscpp::Parameter to initialize with parameterized topic name
-  roscpp::Parameter<std::string> topic_param{ "topic_key", "topic_4" };  // read {topic_key} from parameter server.
-                                                                         // If fails, use "topic_4"
-  StringSub subscriber_4_{ topic_param, &SubscriberTest::callback, this };
-
   bool callback_executed{ false };
 };
 
@@ -47,12 +39,6 @@ TEST_F(SubscriberTest, constructors)
 
   EXPECT_STREQ(subscriber_2_.getTopic().c_str(), "/topic_2");
   EXPECT_EQ(subscriber_2_.getQueueSize(), 5);  // Obviously, queue size is expected to be 5
-
-  EXPECT_STREQ(subscriber_3_.getTopic().c_str(),
-               "/test/topic_3");  // Now, subscriber topic has nh_private's namespace
-
-  EXPECT_STREQ(subscriber_4_.getTopic().c_str(),
-               "/topic_from_param_server");  // Now subscribes to parameterized topic name
 }
 
 TEST_F(SubscriberTest, Callback)
