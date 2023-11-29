@@ -3,15 +3,27 @@ project(isr_ros_utils)
 add_compile_options(-std=c++14)
 
 find_package(catkin REQUIRED COMPONENTS roscpp)
-# find_package(Eigen3 REQUIRED) find_package(PCL 1.10 REQUIRED)
+find_package(Eigen3 REQUIRED) 
 
 # catkin specific configuration ##
-catkin_package(INCLUDE_DIRS include CATKIN_DEPENDS roscpp)
+catkin_package(INCLUDE_DIRS include LIBRARIES isr_ros_utils CATKIN_DEPENDS roscpp)
 
 # Build ##
 set(CMAKE_BUILD_TYPE Release)
-include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(
+  include 
+  ${catkin_INCLUDE_DIRS} 
+  ${EIGEN3_INCLUDE_DIR}
+)
 
+# Declare a C++ library ##
+add_library(${PROJECT_NAME}
+  src/TransformHandler.cpp
+  src/MsgConverter.cpp
+)
+target_link_libraries(${PROJECT_NAME}
+  ${catkin_LIBRARIES}
+)
 
 # Testing ##
 if(CATKIN_ENABLE_TESTING)

@@ -3,8 +3,8 @@
 namespace ros
 {
 bool TransformHandler::getTransform(const std::string& target_frame, const std::string& source_frame,
-                                       const ros::Time& time, const ros::Duration& timeout,
-                                       geometry_msgs::TransformStamped& transform_stamped)
+                                    const ros::Time& time, const ros::Duration& timeout,
+                                    geometry_msgs::TransformStamped& transform_stamped)
 {
   try
   {
@@ -20,7 +20,14 @@ bool TransformHandler::getTransform(const std::string& target_frame, const std::
 }
 
 bool TransformHandler::getTransform(const std::string& target_frame, const std::string& source_frame,
-                                       geometry_msgs::TransformStamped& transform_stamped)
+                                    const ros::Time& time, geometry_msgs::TransformStamped& transform_stamped)
+{
+  const ros::Duration timeout(ros::Duration(0.02));
+  return getTransform(target_frame, source_frame, time, timeout, transform_stamped);
+}
+
+bool TransformHandler::getTransform(const std::string& target_frame, const std::string& source_frame,
+                                    geometry_msgs::TransformStamped& transform_stamped)
 {
   const ros::Time current_time(ros::Time(0));
   const ros::Duration timeout(ros::Duration(0.02));
@@ -29,8 +36,8 @@ bool TransformHandler::getTransform(const std::string& target_frame, const std::
 }
 
 bool TransformHandler::getTransformEigen(const std::string& target_frame, const std::string& source_frame,
-                                            const ros::Time& time, const ros::Duration& timeout,
-                                            Eigen::Affine3d& transform)
+                                         const ros::Time& time, const ros::Duration& timeout,
+                                         Eigen::Affine3d& transform)
 {
   geometry_msgs::TransformStamped transform_stamped;
   if (!getTransform(target_frame, source_frame, time, timeout, transform_stamped))
@@ -41,7 +48,18 @@ bool TransformHandler::getTransformEigen(const std::string& target_frame, const 
 }
 
 bool TransformHandler::getTransformEigen(const std::string& target_frame, const std::string& source_frame,
-                                            Eigen::Affine3d& transform)
+                                         const ros::Time& time, Eigen::Affine3d& transform)
+{
+  geometry_msgs::TransformStamped transform_stamped;
+  if (!getTransform(target_frame, source_frame, time, transform_stamped))
+    return false;
+
+  toEigen(transform_stamped.transform, transform);
+  return true;
+}
+
+bool TransformHandler::getTransformEigen(const std::string& target_frame, const std::string& source_frame,
+                                         Eigen::Affine3d& transform)
 {
   geometry_msgs::TransformStamped transform_stamped;
   if (!getTransform(target_frame, source_frame, transform_stamped))
@@ -53,10 +71,10 @@ bool TransformHandler::getTransformEigen(const std::string& target_frame, const 
 
 template <typename T>
 bool TransformHandler::doTransform(const T& in, const std::string& target_frame, const std::string& source_frame,
-                                      const ros::Time& time, const ros::Duration& timeout, T& out)
+                                   const ros::Time& time, const ros::Duration& timeout, T& out)
 {
   geometry_msgs::TransformStamped transform;
-  if (!getTransform(transform, target_frame, source_frame, time, timeout))
+  if (!getTransform(target_frame, source_frame, time, timeout, transform))
     return false;
 
   tf2::doTransform(in, out, transform);
@@ -65,7 +83,7 @@ bool TransformHandler::doTransform(const T& in, const std::string& target_frame,
 
 template <typename T>
 bool TransformHandler::doTransform(const T& in, const std::string& target_frame, const std::string& source_frame,
-                                      T& out)
+                                   T& out)
 {
   geometry_msgs::TransformStamped transform;
   if (!getTransform(target_frame, source_frame, transform))
@@ -77,15 +95,15 @@ bool TransformHandler::doTransform(const T& in, const std::string& target_frame,
 
 template <typename T>
 bool TransformHandler::doTransform(const T& in, const std::string& target_frame, const ros::Time& time,
-                                      const ros::Duration& timeout, T& out)
+                                   const ros::Duration& timeout, T& out)
 {
-  doTransform(in, target_frame, in.header.frame_id, time, timeout, out);
+  return doTransform(in, target_frame, in.header.frame_id, time, timeout, out);
 }
 
 template <typename T>
 bool TransformHandler::doTransform(const T& in, const std::string& target_frame, T& out)
 {
-  doTransform(in, target_frame, in.header.frame_id, out);
+  return doTransform(in, target_frame, in.header.frame_id, out);
 }
 
 void TransformHandler::toEigen(const geometry_msgs::Transform& transform, Eigen::Affine3d& transform_eigen)
@@ -106,4 +124,4 @@ void TransformHandler::toEigen(const geometry_msgs::Transform& transform, Eigen:
   transform_eigen.rotate(rotation);
 }
 
-}  // namespace roscpp
+}  // namespace ros
