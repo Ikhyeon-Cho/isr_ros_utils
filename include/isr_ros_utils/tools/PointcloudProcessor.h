@@ -33,10 +33,8 @@ template <class T>
 class PointcloudProcessor
 {
 public:
-  using PointCloud = pcl::PointCloud<T>;
-  using PointCloudPtr = pcl::PointCloud<T>::Ptr;
-  // typedef pcl::PointCloud<T> PointCloud;
-  // typedef typename pcl::PointCloud<T>::Ptr PointCloudPtr;
+  typedef pcl::PointCloud<T> PointCloud;
+  typedef typename pcl::PointCloud<T>::Ptr PointCloudPtr;
 
 public:
   PointcloudProcessor();
@@ -70,7 +68,7 @@ private:
   };
 
 private:
-  ros::TransformHandler transform_handler_;
+  TransformHandler transform_handler_;
   PointCloudPtr pclCloud_;
 };
 

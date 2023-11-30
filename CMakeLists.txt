@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.0.2)
 project(isr_ros_utils)
 add_compile_options(-std=c++14)
 
+find_package(PCL REQUIRED)
 find_package(catkin REQUIRED COMPONENTS roscpp)
 find_package(Eigen3 REQUIRED) 
 
@@ -14,15 +15,18 @@ include_directories(
   include 
   ${catkin_INCLUDE_DIRS} 
   ${EIGEN3_INCLUDE_DIR}
+  ${PCL_INCLUDE_DIRS}
 )
 
 # Declare a C++ library ##
 add_library(${PROJECT_NAME}
   src/TransformHandler.cpp
   src/MsgConverter.cpp
+  src/PointcloudProcessor.cpp
 )
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
+  ${PCL_LIBRARIES}
 )
 
 # Testing ##

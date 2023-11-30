@@ -48,17 +48,15 @@ bool PointcloudProcessor<T>::transformPointCloudTo(const std::string& target_fra
   if (source_frame == target_frame)
     return true;
 
-  geometry_msgs::TransformStamped transform_stamped;
+  Eigen::Affine3d transform_matrix;
   ros::Time timestamp = pcl_conversions::fromPCL(pclCloud_->header.stamp);
-  if (!transform_handler_.getTransform(transform_stamped, target_frame, source_frame, timestamp))
+  if (!transform_handler_.getTransformEigen(target_frame, source_frame, timestamp, transform_matrix))
     return false;
-
-  Eigen::Affine3d transform_eigen = transform_handler_.toEigen(transform_stamped.transform);
 
   PointCloudPtr transformedCloud = boost::make_shared<PointCloud>();
   transformedCloud->header = pclCloud_->header;
 
-  pcl::transformPointCloud(*pclCloud_, *transformedCloud, transform_eigen);
+  pcl::transformPointCloud(*pclCloud_, *transformedCloud, transform_matrix);
   pclCloud_.swap(transformedCloud);
   pclCloud_->header.frame_id = target_frame;
 
