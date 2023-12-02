@@ -39,31 +39,31 @@ public:
 public:
   PointcloudProcessor();
 
-  typename pcl::PointCloud<T>::Ptr transformPointcloud(const PointCloudPtr& input, const std::string& target_frame, bool& success);
+  /// @brief The users should check whether the transform is succeeded or not (nullptr)
+  /// @param input The pointcloud to be transformed
+  /// @param target_frame The frame to which the data should be transformed
+  /// @param success True if succeed to get transform. False otherwise
+  /// @return A shared_ptr of the transformed data. If fails to get transform, returns nullptr
+  PointCloudPtr transformPointcloud(const PointCloudPtr& input, const std::string& target_frame, bool& success);
 
-  void setPointCloud(const sensor_msgs::PointCloud2& _cloud);
+  PointCloudPtr filterPointcloudByAxis(const PointCloudPtr& input, const std::string& axis, double range_min,
+                                       double range_max, bool negative = false);
 
-  void getPointCloud(sensor_msgs::PointCloud2& _cloud);
+  PointCloudPtr filterPointcloudByRange2D(const PointCloudPtr& input, double range_min, double range_max);
 
-  sensor_msgs::PointCloud2Ptr getPointCloud();
+  PointCloudPtr filterPointcloudByRange(const PointCloudPtr& input, double range_min, double range_max);
 
-  void clearPointCloud();
+  PointCloudPtr filterPointcloudByAngle(const PointCloudPtr& input, double angle_start, double angle_end,
+                                        bool negative = false);
 
-  bool transformPointCloudTo(const std::string& _target_frame);
+  PointCloudPtr filterPointcloudByVoxel(const PointCloudPtr& input, double voxel_x, double voxel_y, double voxel_z);
 
-  void filterCloudByRange(double _minRange, double _maxRange);
+  PointCloudPtr filterPointcloudByVoxel(const PointCloudPtr& input, double voxel_size);
 
-  void filterCloudByAngle(double _filterAngle);
-
-  void filterCloudByAxis(const std::string& _axis, double _minRange, double _maxRange, bool _negative = false);
-
-  void voxelDownsampling(double _voxelLeafSize);
-
+  // TODO: Move to velodyne-specific template class 
   void filterRingOfIndex(double _ringIndex, bool _negative = false);
 
 private:
-  bool cloudIsEmpty();
-
   float pointDistance(const T& p)
   {
     return std::sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
@@ -81,8 +81,8 @@ PointcloudProcessor<T>::PointcloudProcessor()
 }
 
 template <typename T>
-typename pcl::PointCloud<T>::Ptr PointcloudProcessor<T>::transformPointcloud(const PointCloudPtr& input,
-                                                                    const std::string& target_frame, bool& success)
+typename PointcloudProcessor<T>::PointCloudPtr
+PointcloudProcessor<T>::transformPointcloud(const PointCloudPtr& input, const std::string& target_frame, bool& success)
 {
   std::string source_frame(input->header.frame_id);
   if (source_frame.empty())
@@ -115,134 +115,117 @@ typename pcl::PointCloud<T>::Ptr PointcloudProcessor<T>::transformPointcloud(con
 }
 
 template <typename T>
-void PointcloudProcessor<T>::setPointCloud(const sensor_msgs::PointCloud2& _msg)
+typename PointcloudProcessor<T>::PointCloudPtr PointcloudProcessor<T>::filterPointcloudByAxis(
+    const PointCloudPtr& input, const std::string& axis, double range_min, double range_max, bool negative)
 {
-  pclCloud_->clear();
-  pcl::fromROSMsg(_msg, *pclCloud_);
-}
+  if (input->empty())
+    return input;
 
-template <typename T>
-void PointcloudProcessor<T>::getPointCloud(sensor_msgs::PointCloud2& _cloud)
-{
-  pcl::toROSMsg(*pclCloud_, _cloud);
-}
-
-template <typename T>
-sensor_msgs::PointCloud2Ptr PointcloudProcessor<T>::getPointCloud()
-{
-  sensor_msgs::PointCloud2Ptr cloudPtr = boost::make_shared<sensor_msgs::PointCloud2>();
-  pcl::toROSMsg(*pclCloud_, *cloudPtr);
-  return cloudPtr;
-}
-
-template <typename T>
-void PointcloudProcessor<T>::clearPointCloud()
-{
-  pclCloud_->clear();
-}
-
-template <typename T>
-bool PointcloudProcessor<T>::transformPointCloudTo(const std::string& target_frame)
-{
-  std::string source_frame = pclCloud_->header.frame_id;
-  if (source_frame.empty())
-  {
-    ROS_ERROR_STREAM("cloud cannot be transformed because it has no frame id");
-    return false;
-  }
-
-  if (source_frame == target_frame)
-    return true;
-
-  Eigen::Affine3d transform_matrix;
-  ros::Time timestamp = pcl_conversions::fromPCL(pclCloud_->header.stamp);
-  if (!transform_handler_.getTransformEigen(target_frame, source_frame, timestamp, transform_matrix))
-    return false;
-
-  PointCloudPtr transformedCloud = boost::make_shared<PointCloud>();
-  transformedCloud->header = pclCloud_->header;
-
-  pcl::transformPointCloud(*pclCloud_, *transformedCloud, transform_matrix);
-  pclCloud_.swap(transformedCloud);
-  pclCloud_->header.frame_id = target_frame;
-
-  return true;
-}
-
-template <typename T>
-void PointcloudProcessor<T>::filterCloudByRange(double _minRange, double _maxRange)
-{
-  if (cloudIsEmpty())
-    return;
-
-  PointCloudPtr filteredCloud = boost::make_shared<PointCloud>();
-  filteredCloud->header = pclCloud_->header;
-  filteredCloud->points.resize(pclCloud_->size());
-  filteredCloud->clear();
-
-  for (auto point_raw : pclCloud_->points)
-  {
-    double horizonDist = sqrt(point_raw.x * point_raw.x + point_raw.y * point_raw.y);
-
-    if (horizonDist > _minRange && horizonDist < _maxRange)
-    {
-      auto point_new = point_raw;
-      point_new.intensity = pointDistance(point_raw);
-      filteredCloud->points.push_back(point_new);
-    }
-  }
-  pclCloud_.swap(filteredCloud);
-}
-
-template <typename T>
-void PointcloudProcessor<T>::filterCloudByAngle(double _filterAngle)
-{
-  if (cloudIsEmpty())
-    return;
-
-  PointCloudPtr filteredCloud = boost::make_shared<PointCloud>();
-  filteredCloud->header = pclCloud_->header;
-  filteredCloud->points.resize(pclCloud_->size());
-  filteredCloud->clear();
-
-  for (auto point_raw : pclCloud_->points)
-  {
-    double horizonAngle = std::atan2(point_raw.y, point_raw.x);
-    if (abs(horizonAngle) < M_PI - DEG2RAD(_filterAngle / 2))
-    {
-      auto point_new = point_raw;
-      point_new.intensity = pointDistance(point_raw);
-      filteredCloud->points.push_back(point_new);
-    }
-  }
-  pclCloud_.swap(filteredCloud);
-}
-
-template <typename T>
-void PointcloudProcessor<T>::filterCloudByAxis(const std::string& _axis, double _minRange, double _maxRange,
-                                               bool _negative)
-{
-  if (cloudIsEmpty())
-    return;
+  PointCloudPtr output = boost::make_shared<PointCloud>();
 
   pcl::PassThrough<T> ps;
-  ps.setInputCloud(pclCloud_);
-  ps.setFilterFieldName(_axis);
-  ps.setFilterLimits(_minRange, _maxRange);
-  ps.setFilterLimitsNegative(_negative);
-  ps.filter(*pclCloud_);
+  ps.setInputCloud(input);
+  ps.setFilterFieldName(axis);
+  ps.setFilterLimits(range_min, range_max);
+  ps.setFilterLimitsNegative(negative);
+  ps.filter(*output);
+  output->header = input->header;
+  return output;
 }
 
 template <typename T>
-void PointcloudProcessor<T>::voxelDownsampling(double _voxelLeafSize)
+typename PointcloudProcessor<T>::PointCloudPtr
+PointcloudProcessor<T>::filterPointcloudByRange2D(const PointCloudPtr& input, double range_min, double range_max)
 {
-  if (cloudIsEmpty())
-    return;
+  if (input->empty())
+    return input;
 
+  PointCloudPtr output = boost::make_shared<PointCloud>();
+  for (auto point : input->points)
+  {
+    double range_2D = sqrt(point.x * point.x + point.y * point.y);
+
+    if (range_2D > range_min && range_2D < range_max)
+    {
+      T filtered_point = point;
+      filtered_point.intensity = range_2D;
+      output->points.push_back(filtered_point);
+    }
+  }
+  output->header = input->header;
+  return output;
+}
+
+template <typename T>
+typename PointcloudProcessor<T>::PointCloudPtr
+PointcloudProcessor<T>::filterPointcloudByRange(const PointCloudPtr& input, double range_min, double range_max)
+{
+  if (input->empty())
+    return input;
+
+  PointCloudPtr output = boost::make_shared<PointCloud>();
+  for (auto point : input->points)
+  {
+    double range_2D = sqrt(point.x * point.x + point.y * point.y + point.z * point.z);
+
+    if (range_2D > range_min && range_2D < range_max)
+    {
+      T filtered_point = point;
+      filtered_point.intensity = range_2D;
+      output->points.push_back(filtered_point);
+    }
+  }
+  output->header = input->header;
+  return output;
+}
+
+template <typename T>
+typename PointcloudProcessor<T>::PointCloudPtr PointcloudProcessor<T>::filterPointcloudByAngle(
+    const PointCloudPtr& input, double angle_start, double angle_end, bool negative)
+{
+  if (input->empty())
+    return input;
+
+  PointCloudPtr output = boost::make_shared<PointCloud>();
+  for (auto point : input->points)
+  {
+    double angle_horizon = std::atan2(point.y, point.x);
+    bool filter_condition = angle_horizon > DEG2RAD(angle_start) && angle_horizon < DEG2RAD(angle_end);
+    if (negative)
+      filter_condition = !filter_condition;
+
+    if (filter_condition)
+    {
+      T filtered_point = point;
+      filtered_point.intensity = pointDistance(point);
+      output->points.push_back(filtered_point);
+    }
+  }
+  output->header = input->header;
+  return output;
+}
+
+template <typename T>
+typename PointcloudProcessor<T>::PointCloudPtr PointcloudProcessor<T>::filterPointcloudByVoxel(
+    const PointCloudPtr& input, double voxel_x, double voxel_y, double voxel_z)
+{
+  if (input->empty())
+    return input;
+
+  PointCloudPtr output = boost::make_shared<PointCloud>();
   pcl::VoxelGrid<T> vox;
-  vox.setInputCloud(pclCloud_);
-  vox.setLeafSize(_voxelLeafSize, _voxelLeafSize, _voxelLeafSize);
-  vox.filter(*pclCloud_);
+  vox.setInputCloud(input);
+  vox.setLeafSize(voxel_x, voxel_y, voxel_z);
+  vox.filter(*output);
+  output->header = input->header;
+  return output;
+}
+
+template <typename T>
+typename PointcloudProcessor<T>::PointCloudPtr
+PointcloudProcessor<T>::filterPointcloudByVoxel(const PointCloudPtr& input, double voxel_size)
+{
+  return filterPointcloudByVoxel(input, voxel_size, voxel_size, voxel_size);
 }
 
 template <typename T>
@@ -264,18 +247,6 @@ void PointcloudProcessor<T>::filterRingOfIndex(double _ringIndex, bool _negative
   }
 
   pclCloud_.swap(filteredCloud);
-}
-
-template <typename T>
-bool PointcloudProcessor<T>::cloudIsEmpty()
-{
-  if (pclCloud_->empty())
-  {
-    ROS_WARN("point cloud empty. Skip passthrough filtering of the point cloud");
-    return true;
-  }
-
-  return false;
 }
 
 }  // namespace ros
