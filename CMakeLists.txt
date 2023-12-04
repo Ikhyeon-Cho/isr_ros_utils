@@ -20,7 +20,6 @@ include_directories(
 
 # Declare a C++ library ##
 add_library(${PROJECT_NAME}
-  src/TransformHandler.cpp
   src/MsgConverter.cpp
 )
 target_link_libraries(${PROJECT_NAME}

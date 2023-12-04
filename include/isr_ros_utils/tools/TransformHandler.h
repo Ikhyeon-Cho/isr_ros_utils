@@ -24,20 +24,39 @@ public:
   /// @brief
   /// @param target_frame The frame to which the data should be transformed
   /// @param source_frame The frame where the data originated
+  /// @param time Queried time for transform lookup
+  /// @param timeout Time for waiting lookupTransform
+  /// @param transform_stamped Transform (translation, rotation) from source to target
+  /// @return True if succeed to get transform. False otherwise
+  bool getTransform(const std::string& target_frame, const std::string& source_frame, const ros::Time& time,
+                    const ros::Duration& timeout, geometry_msgs::TransformStamped& transform_stamped)
+  {
+    try
+    {
+      transform_stamped = tf_buffer_->lookupTransform(target_frame, source_frame, time, timeout);
+      return true;
+    }
+    catch (const tf2::TransformException& ex)
+    {
+      ROS_ERROR_STREAM_THROTTLE(1, "Failed to look up transform from " << source_frame << " to " << target_frame << ": "
+                                                                       << ex.what());  // 0.2us
+      return false;
+    }
+  }
+
+  /// @brief
+  /// @param target_frame The frame to which the data should be transformed
+  /// @param source_frame The frame where the data originated
   /// @param transform_stamped Transform (translation, rotation) from source to target
   /// @return True if succeed to get transform. False otherwise
   bool getTransform(const std::string& target_frame, const std::string& source_frame,
-                    geometry_msgs::TransformStamped& transform_stamped);
+                    geometry_msgs::TransformStamped& transform_stamped)
+  {
+    const ros::Time current_time(ros::Time(0));
+    const ros::Duration timeout(ros::Duration(0.02));
 
-  /// @brief
-  /// @param target_frame The frame to which the data should be transformed
-  /// @param source_frame The frame where the data originated
-  /// @param time Queried time for transform lookup
-  /// @param timeout Time for waiting lookupTransform
-  /// @param transform_stamped Transform (translation, rotation) from source to target
-  /// @return True if succeed to get transform. False otherwise
-  bool getTransform(const std::string& target_frame, const std::string& source_frame, const ros::Time& time,
-                    const ros::Duration& timeout, geometry_msgs::TransformStamped& transform_stamped);
+    return getTransform(target_frame, source_frame, current_time, timeout, transform_stamped);
+  }
 
   /// @brief
   /// @param target_frame The frame to which the data should be transformed
@@ -46,23 +65,43 @@ public:
   /// @param transform_stamped Transform (translation, rotation) from source to target
   /// @return True if succeed to get transform. False otherwise
   bool getTransform(const std::string& target_frame, const std::string& source_frame, const ros::Time& time,
-                    geometry_msgs::TransformStamped& transform_stamped);
+                    geometry_msgs::TransformStamped& transform_stamped)
+  {
+    const ros::Duration timeout(ros::Duration(0.02));
+    return getTransform(target_frame, source_frame, time, timeout, transform_stamped);
+  }
 
   /// @brief
   /// @param target_frame The frame to which the data should be transformed
   /// @param source_frame The frame where the data originated
   /// @param transform Eigen transform matrix from source to target
   /// @return True if succeed to get transform. False otherwise
-  bool getTransformEigen(const std::string& target_frame, const std::string& source_frame, Eigen::Affine3d& transform);
+  bool getTransformEigen(const std::string& target_frame, const std::string& source_frame, Eigen::Affine3d& transform)
+  {
+    geometry_msgs::TransformStamped transform_stamped;
+    if (!getTransform(target_frame, source_frame, transform_stamped))
+      return false;
 
-  /// @brief 
+    toEigen(transform_stamped.transform, transform);
+    return true;
+  }
+
+  /// @brief
   /// @param target_frame The frame to which the data should be transformed
   /// @param source_frame The frame where the data originated
   /// @param time Queried time for transform lookup
   /// @param transform Eigen transform matrix from source to target
   /// @return True if succeed to get transform. False otherwise
   bool getTransformEigen(const std::string& target_frame, const std::string& source_frame, const ros::Time& time,
-                         Eigen::Affine3d& transform);
+                         Eigen::Affine3d& transform)
+  {
+    geometry_msgs::TransformStamped transform_stamped;
+    if (!getTransform(target_frame, source_frame, time, transform_stamped))
+      return false;
+
+    toEigen(transform_stamped.transform, transform);
+    return true;
+  }
 
   /// @brief
   /// @param target_frame The frame to which the data should be transformed
@@ -72,7 +111,15 @@ public:
   /// @param transform Eigen transform matrix from source to target
   /// @return True if succeed to get transform. False otherwise
   bool getTransformEigen(const std::string& target_frame, const std::string& source_frame, const ros::Time& time,
-                         const ros::Duration& timeout, Eigen::Affine3d& transform);
+                         const ros::Duration& timeout, Eigen::Affine3d& transform)
+  {
+    geometry_msgs::TransformStamped transform_stamped;
+    if (!getTransform(target_frame, source_frame, time, timeout, transform_stamped))
+      return false;
+
+    toEigen(transform_stamped.transform, transform);
+    return true;
+  }
 
   /// @brief
   /// @tparam T Datatype
@@ -82,7 +129,15 @@ public:
   /// @param out A reference to the transformed data
   /// @return True if succeed to get transformed data. False otherwise
   template <typename T>
-  bool doTransform(const T& in, const std::string& target_frame, const std::string& source_frame, T& out);
+  bool doTransform(const T& in, const std::string& target_frame, const std::string& source_frame, T& out)
+  {
+    geometry_msgs::TransformStamped transform;
+    if (!getTransform(target_frame, source_frame, transform))
+      return false;
+
+    tf2::doTransform(in, out, transform);
+    return true;
+  }
 
   /// @brief
   /// @tparam T Datatype
@@ -95,7 +150,15 @@ public:
   /// @return True if succeed to get transformed data. False otherwise
   template <typename T>
   bool doTransform(const T& in, const std::string& target_frame, const std::string& source_frame, const ros::Time& time,
-                   const ros::Duration& timeout, T& out);
+                   const ros::Duration& timeout, T& out)
+  {
+    geometry_msgs::TransformStamped transform;
+    if (!getTransform(target_frame, source_frame, time, timeout, transform))
+      return false;
+
+    tf2::doTransform(in, out, transform);
+    return true;
+  }
 
   /// @brief
   /// @tparam T Datatype
@@ -107,7 +170,10 @@ public:
   /// @return True if succeed to get transformed data. False otherwise
   template <typename T>
   bool doTransform(const T& in, const std::string& target_frame, const ros::Time& time, const ros::Duration& timeout,
-                   T& out);
+                   T& out)
+  {
+    return doTransform(in, target_frame, in.header.frame_id, time, timeout, out);
+  }
 
   /// @brief
   /// @tparam T Datatype
@@ -116,12 +182,31 @@ public:
   /// @param out A reference to the transformed data
   /// @return True if succeed to get transformed data. False otherwise
   template <typename T>
-  bool doTransform(const T& in, const std::string& target_frame, T& out);
+  bool doTransform(const T& in, const std::string& target_frame, T& out)
+  {
+    return doTransform(in, target_frame, in.header.frame_id, out);
+  }
 
   /// @brief
   /// @param transform geometry_msgs::Transform Type
   /// @param transform_eigen Eigen Transform Matrix
-  void toEigen(const geometry_msgs::Transform& transform, Eigen::Affine3d& transform_eigen);
+  void toEigen(const geometry_msgs::Transform& transform, Eigen::Affine3d& transform_eigen)
+  {
+    transform_eigen = Eigen::Affine3d::Identity();
+
+    // set translation
+    Eigen::Vector3d translation;
+    translation << transform.translation.x, transform.translation.y, transform.translation.z;
+    transform_eigen.translation() = translation;
+
+    // set rotation
+    Eigen::Quaterniond rotation;
+    rotation.x() = transform.rotation.x;
+    rotation.y() = transform.rotation.y;
+    rotation.z() = transform.rotation.z;
+    rotation.w() = transform.rotation.w;
+    transform_eigen.rotate(rotation);
+  }
 
 private:
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_{ std::make_shared<tf2_ros::Buffer>() };
