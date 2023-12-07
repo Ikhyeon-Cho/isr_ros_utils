@@ -3,11 +3,11 @@ project(isr_ros_utils)
 add_compile_options(-std=c++14)
 
 find_package(PCL REQUIRED)
-find_package(catkin REQUIRED COMPONENTS roscpp)
+find_package(catkin REQUIRED COMPONENTS roscpp tf2_ros tf2_eigen tf2_geometry_msgs)
 find_package(Eigen3 REQUIRED) 
 
 # catkin specific configuration ##
-catkin_package(INCLUDE_DIRS include LIBRARIES isr_ros_utils CATKIN_DEPENDS roscpp)
+catkin_package(INCLUDE_DIRS include LIBRARIES isr_ros_utils CATKIN_DEPENDS roscpp tf2_ros tf2_eigen tf2_geometry_msgs)
 
 # Build ##
 set(CMAKE_BUILD_TYPE Release)
