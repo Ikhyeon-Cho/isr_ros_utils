@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>isr_ros_utils</name>
+  <version>0.0.0</version>
+  <description>Meta-pacakge for the ROS 1 utilities</description>
+  <maintainer email="tre0430@korea.ac.kr">Ikhyeon Cho</maintainer>
+  <license>BSD</license>
+  <author email="tre0430@korea.ac.kr">Ikhyeon Cho</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <exec_depend>ros_node_utils</exec_depend>
+  <exec_depend>ros_transform_utils</exec_depend>
+  <exec_depend>ros_pcl_utils</exec_depend>
+
+  <export>
+    <metapackage />
+  </export>
+</package>

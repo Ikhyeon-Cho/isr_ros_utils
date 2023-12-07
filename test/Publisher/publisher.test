@@ -1,5 +1,0 @@
-<launch>
-  <arg name="test_unit" default="publisher" />
-
-  <test test-name="test_node" pkg="isr_ros_utils" type="test_$(arg test_unit)" time-limit="10.0" args="" />
-</launch>

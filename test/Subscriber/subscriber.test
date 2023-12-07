@@ -1,6 +1,0 @@
-<launch>
-  <arg name="test_unit" default="subscriber" />
-
-  <param name="topic_key" value="topic_from_param_server" />
-  <test test-name="test_node" pkg="isr_ros_utils" type="test_$(arg test_unit)" time-limit="10.0" args="" />
-</launch>

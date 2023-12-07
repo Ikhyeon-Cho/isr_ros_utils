@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>ros_pcl_utils</name>
+  <version>0.0.0</version>
+    <description>This package is built for using pcl with compact interface</description>
+  <maintainer email="tre0430@korea.ac.kr">Ikhyeon Cho</maintainer>
+  <license>BSD</license>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>pcl_conversions</depend>
+  <test_depend>rosunit</test_depend>
+  <build_depend>rostest</build_depend>
+
+  <export>
+  </export>
+</package>

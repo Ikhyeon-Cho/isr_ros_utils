@@ -1,0 +1,6 @@
+<launch>
+  <arg name="test_unit" default="timer" />
+
+  <param name="duration_key" value="0.5" />
+  <test test-name="test_node" pkg="ros_node_utils" type="test_$(arg test_unit)" time-limit="10.0" args="" />
+</launch>
