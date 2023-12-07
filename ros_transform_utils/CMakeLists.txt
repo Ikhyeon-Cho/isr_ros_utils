@@ -18,6 +18,11 @@ catkin_package(
     tf2_ros tf2_eigen tf2_geometry_msgs
 )
 
+# Declare a C++ library ##
+add_library(${PROJECT_NAME}
+  src/TransformHandler.cpp
+)
+
 # Build ##
 set(CMAKE_BUILD_TYPE Release)
 

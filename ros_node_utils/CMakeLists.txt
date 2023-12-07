@@ -26,7 +26,12 @@ include_directories(
 )
 
 # Declare a C++ library ##
-
+add_library(${PROJECT_NAME}
+  src/Core.cpp
+)
+target_link_libraries(${PROJECT_NAME}
+  ${catkin_LIBRARIES}
+)
 
 # Testing ##
 if(CATKIN_ENABLE_TESTING)

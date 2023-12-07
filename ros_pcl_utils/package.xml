@@ -8,6 +8,7 @@
   
   <buildtool_depend>catkin</buildtool_depend>
   <depend>pcl_conversions</depend>
+  <depend>ros_transform_utils</depend>
   <test_depend>rosunit</test_depend>
   <build_depend>rostest</build_depend>
 

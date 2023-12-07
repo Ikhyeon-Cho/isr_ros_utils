@@ -3,8 +3,9 @@ project(ros_pcl_utils)
 add_compile_options(-std=c++14)
 
 find_package(PCL REQUIRED)
-find_package(catkin REQUIRED COMPONENTS 
+find_package(catkin REQUIRED COMPONENTS
   pcl_conversions
+  ros_transform_utils
 )
 
 # catkin specific configuration ##
@@ -15,6 +16,8 @@ catkin_package(
     ${PROJECT_NAME} 
   CATKIN_DEPENDS 
     pcl_conversions
+    ros_transform_utils
+
 )
 
 # Build ##
@@ -27,6 +30,10 @@ include_directories(
 )
 
 # Declare a C++ library ##
+add_library(${PROJECT_NAME}
+  src/PointcloudProcessor.cpp
+)
+
 
 # Testing ##
 if(CATKIN_ENABLE_TESTING)
