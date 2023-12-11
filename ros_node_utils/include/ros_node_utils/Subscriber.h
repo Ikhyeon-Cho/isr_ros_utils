@@ -105,6 +105,12 @@ public:
     return queue_size_;
   }
 
+  /// @brief 
+  void shutdown()
+  {
+    sub_.shutdown();
+  }
+
 private:
   ros::NodeHandle nh_;
   ros::Subscriber sub_;
