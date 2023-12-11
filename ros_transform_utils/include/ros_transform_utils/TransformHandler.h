@@ -11,6 +11,7 @@
 #define ROS_TRANSFORM_UTILS_TRANSFORM_HANDLER_H
 
 #include <tf2_ros/transform_listener.h>
+#include <tf2_ros/transform_broadcaster.h>
 #include <tf2_eigen/tf2_eigen.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
@@ -74,6 +75,10 @@ public:
   bool getTransformEigen(const std::string& target_frame, const std::string& source_frame, const ros::Time& time,
                          const ros::Duration& timeout, Eigen::Affine3d& transform);
 
+  void sendTransform(const geometry_msgs::Transform& transform, const std::string& target_frame,
+                     const std::string& source_frame, const ros::Time& time);
+
+
   /// @brief
   /// @tparam T Datatype
   /// @param in The data to be transformed
@@ -125,6 +130,34 @@ public:
   }
 
   /// @brief
+  /// @param quaternion tf2 quaternion
+  /// @param roll A reference of roll angle [rad]
+  /// @param pitch A reference of pitch angle [rad]
+  /// @param yaw A reference of yaw angle [rad]
+  void getRPYFrom(const tf2::Quaternion& quaternion, double& roll, double& pitch, double& yaw);
+
+  /// @brief
+  /// @param quaternion geometry_msgs quaternion
+  /// @param roll A reference of roll angle [rad]
+  /// @param pitch A reference of pitch angle [rad]
+  /// @param yaw A reference of yaw angle [rad]
+  void getRPYFrom(const geometry_msgs::Quaternion& quaternion, double& roll, double& pitch, double& yaw);
+
+  /// @brief
+  /// @param roll roll angle [rad]
+  /// @param pitch pitch angle [rad]
+  /// @param yaw yaw angle [rad]
+  /// @param quaternion A reference of tf2 quaternion
+  void getQuaternionFrom(double roll, double pitch, double yaw, tf2::Quaternion& quaternion);
+
+  /// @brief
+  /// @param roll roll angle [rad]
+  /// @param pitch pitch angle [rad]
+  /// @param yaw yaw angle [rad]
+  /// @param quaternion A reference of geometry_msgs quaternion
+  void getQuaternionFrom(double roll, double pitch, double yaw, geometry_msgs::Quaternion& quaternion);
+
+  /// @brief
   /// @param transform geometry_msgs::Transform Type
   /// @param transform_eigen Eigen Transform Matrix
   void toEigen(const geometry_msgs::Transform& transform, Eigen::Affine3d& transform_eigen);
@@ -132,6 +165,7 @@ public:
 private:
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_{ std::make_shared<tf2_ros::Buffer>() };
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_{ std::make_shared<tf2_ros::TransformListener>(*tf_buffer_) };
+  std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_{ std::make_shared<tf2_ros::TransformBroadcaster>() };
 };
 // class TransformHandler
 

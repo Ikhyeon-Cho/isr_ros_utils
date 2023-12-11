@@ -78,29 +78,42 @@ bool TransformHandler::getTransformEigen(const std::string& target_frame, const 
   return true;
 }
 
-// template <typename T>
-// bool TransformHandler::doTransform(const T& in, const std::string& target_frame, const std::string& source_frame,
-//                                    T& out)
-// {
-//   geometry_msgs::TransformStamped transform;
-//   if (!getTransform(target_frame, source_frame, transform))
-//     return false;
+void TransformHandler::sendTransform(const geometry_msgs::Transform& transform, const std::string& target_frame,
+                                     const std::string& source_frame, const ros::Time& time)
+{
+  geometry_msgs::TransformStamped tf;
+  tf.header.stamp = time;
+  tf.header.frame_id = target_frame;
+  tf.child_frame_id = source_frame;
+  tf.transform = transform;
 
-//   tf2::doTransform(in, out, transform);
-//   return true;
-// }
+  tf_broadcaster_->sendTransform(tf);
+}
 
-// template <typename T>
-// bool TransformHandler::doTransform(const T& in, const std::string& target_frame, const std::string& source_frame,
-//                                    const ros::Time& time, const ros::Duration& timeout, T& out)
-// {
-//   geometry_msgs::TransformStamped transform;
-//   if (!getTransform(target_frame, source_frame, time, timeout, transform))
-//     return false;
+void TransformHandler::getRPYFrom(const tf2::Quaternion& quaternion, double& roll, double& pitch, double& yaw)
+{
+  tf2::Matrix3x3 matrix(quaternion);
+  matrix.getEulerYPR(yaw, pitch, roll);
+}
 
-//   tf2::doTransform(in, out, transform);
-//   return true;
-// }
+void TransformHandler::getRPYFrom(const geometry_msgs::Quaternion& quaternion, double& roll, double& pitch, double& yaw)
+{
+  tf2::Quaternion quaternion_tf;
+  tf2::fromMsg(quaternion, quaternion_tf);
+  getRPYFrom(quaternion_tf, roll, pitch, yaw);
+}
+
+void TransformHandler::getQuaternionFrom(double roll, double pitch, double yaw, tf2::Quaternion& quaternion)
+{
+  quaternion.setRPY(roll, pitch, yaw);
+}
+
+void TransformHandler::getQuaternionFrom(double roll, double pitch, double yaw, geometry_msgs::Quaternion& quaternion)
+{
+  tf2::Quaternion quaternion_tf;
+  quaternion_tf.setRPY(roll, pitch, yaw);
+  quaternion = tf2::toMsg(quaternion_tf);
+}
 
 void TransformHandler::toEigen(const geometry_msgs::Transform& transform, Eigen::Affine3d& transform_eigen)
 {
